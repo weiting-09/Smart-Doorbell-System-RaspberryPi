@@ -12,9 +12,9 @@ from firebase_admin import credentials, db
 sys.modules['smbus'] = smbus
 
 # 初始化 Firebase
-cred = credentials.Certificate("MY_CREDENTIAL_FILE.json")
+cred = credentials.Certificate("function-test-firebase-adminsdk.json")
 firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://MY_DATABASE_URL/'
+    'databaseURL': 'https://function-test-4bdd0-default-rtdb.firebaseio.com/'
 })
 
 GPIO.setmode(GPIO.BCM)
