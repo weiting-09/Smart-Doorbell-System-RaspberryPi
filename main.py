@@ -8,6 +8,7 @@ import threading
 from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials, db
+from evdev import InputDevice, categorize, ecodes
 
 sys.modules['smbus'] = smbus
 
@@ -16,6 +17,9 @@ cred = credentials.Certificate("function-test-firebase-adminsdk.json")
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://function-test-4bdd0-default-rtdb.firebaseio.com/'
 })
+
+device_path = '/dev/input/event0'
+dev = InputDevice(device_path)
 
 GPIO.setmode(GPIO.BCM)
 LED_green = 21
@@ -26,19 +30,28 @@ IR_PIN = 16
 num = ""
 temporary_num = ""
 
-KEYS = {
-    0xff6897: '0',
-    0xff30cf: '1',
-    0xff18e7: '2',
-    0xff7a85: '3',
-    0xff10ef: '4',
-    0xff38c7: '5',
-    0xff5aa5: '6',
-    0xff42bd: '7',
-    0xff4ab5: '8',
-    0xff52ad: '9',
-    0xff906f: 'EQ'
+# 對應的數字鍵盤 keycode
+keypad_mapping = {
+    69: 'Num Lock',
+    98: '/',
+    55: '*',
+    74: '-',
+    78: '+',
+    14: 'Backspace',
+    96: 'Enter',
+    82: '0',
+    83: '.',
+    79: '1',
+    80: '2',
+    81: '3',
+    75: '4',
+    76: '5',
+    77: '6',
+    71: '7',
+    72: '8',
+    73: '9'
 }
+
 
 GPIO.setup(LED_green, GPIO.OUT)
 GPIO.setup(LED_red, GPIO.OUT)
@@ -58,8 +71,14 @@ melody_doorBell = [CH[3], CH[1]]
 beat_doorBell = [1, 2]
 Buzz = GPIO.PWM(Buzzer, 440)
 
+###
+def get_access():
+    while True:
+        data = db.reference('locks/lock_001/status').get()
+    
+
 def get_access_settings():
-    data = db.reference('access_control').get()
+    data = db.reference('locks/lock_001/passwords').get()
     return (
         int(data.get("cardUID", 0)),
         data.get("password", ""),
@@ -93,32 +112,6 @@ def binary_aquire(pin, duration):
         results.append(GPIO.input(pin))
     return results
 
-def on_ir_receive(pinNo, bouncetime=150):
-    data = binary_aquire(pinNo, bouncetime / 1000.0)
-    if len(data) < bouncetime:
-        return
-    rate = len(data) / (bouncetime / 1000.0)
-    pulses = []
-    i_break = 0
-    for i in range(1, len(data)):
-        if data[i] != data[i-1] or i == len(data)-1:
-            pulses.append((data[i-1], int((i-i_break)/rate*1e6)))
-            i_break = i
-    outbin = ""
-    for val, us in pulses:
-        if val != 1:
-            continue
-        if outbin and us > 2000:
-            break
-        elif us < 1000:
-            outbin += "0"
-        elif 1000 < us < 2000:
-            outbin += "1"
-    try:
-        return int(outbin, 2)
-    except ValueError:
-        return None
-
 def AllowedToEnter(method="unknown"):
     GPIO.output(LED_green, GPIO.HIGH)
     lcd.clear()
@@ -146,6 +139,15 @@ def is_now_in_range(start_str, end_str):
     start = datetime.strptime(start_str, "%Y/%m/%d %H:%M")
     end = datetime.strptime(end_str, "%Y/%m/%d %H:%M")
     return start <= now <= end
+
+def keyboard_job():
+    for event in dev.read_loop():
+        if event.type == ecodes.EV_KEY:
+            key_event = categorize(event)
+            if key_event.keystate == key_event.key_down:
+                keycode = key_event.scancode
+                if keycode in keypad_mapping:
+                    print(f'You pressed: {keypad_mapping[keycode]}')
 
 def IR_job():
     global temporary_num, num
@@ -194,8 +196,10 @@ def main():
         lcd.write_string("Enter password")
         lcd.cursor_pos = (1, 5)
         lcd.write_string("or tap card")
-        threading.Thread(target=IR_job).start()
+        get_access_settings()
+        threading.Thread(target=keyboard_job).start()
         threading.Thread(target=RFID_job).start()
+        threading.Thread(target=get_access).start()
         while True:
             sleep(1)
     except KeyboardInterrupt:
