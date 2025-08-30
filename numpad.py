@@ -1,5 +1,6 @@
 from evdev import InputDevice, ecodes, categorize
-from connect import generate_safe_id
+from connect import connect_to_smartPhone
+import constants
 
 numpad_path = '/dev/input/event0'
 dev = InputDevice(numpad_path)
@@ -51,7 +52,7 @@ def keyboard_input_job():
 
 def keyboard_function_job(key):
     global temporary_num, num
-    print ('password_job')
+    print ('keyboard_function_job')
 
     if key == 'Enter':
         print('pressed Enter')
@@ -65,7 +66,8 @@ def keyboard_function_job(key):
 #             NotAllowedToEnter(password)
     elif key == 'NumLock':
         print('pressed NumLock')
-        print(generate_safe_id())
+        print("lock_id in numpad:", constants.lock_id)
+        connect_to_smartPhone()
 #     elif key is not None:
 #         temporary_num += key
 #         if len(temporary_num) > 4:

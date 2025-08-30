@@ -1,7 +1,7 @@
 from firebase_admin import db
 import RPi.GPIO as GPIO
-from constants import lock_id
 from lock import lock_the_door, unlock_the_door
+import constants
 
 def stream_handler(event):
     if event.path == "/":
@@ -20,6 +20,18 @@ def stream_handler(event):
                 print("門已上鎖")
 
 # 監聽欄位變化
-def stream_handler_listener():
-    status_ref = db.reference('locks/' + lock_id )
+def stream_handler_listener(lock_id):
+    constants.lock_id = lock_id
+    status_ref = db.reference(f'locks/{lock_id}')
+    set_lock_default_data(status_ref)
     status_ref.listen(stream_handler)
+
+def set_lock_default_data(status_ref):
+    current_data = status_ref.get()
+    if current_data is None:
+        default_data = {
+            # TODO: 加入lock預設欄位
+            'isOpened': False,
+        }
+        status_ref.set(default_data)
+        print(f"不存在，已建立預設資料")
