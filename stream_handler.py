@@ -34,4 +34,4 @@ def set_lock_default_data(status_ref):
             'isOpened': False,
         }
         status_ref.set(default_data)
-        print(f"不存在，已建立預設資料")
+        print(f"lock原本不存在，已建立預設資料")

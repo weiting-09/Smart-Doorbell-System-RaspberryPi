@@ -15,8 +15,6 @@ firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://smart-doorbell-system-b85c7-default-rtdb.firebaseio.com/'
 })
 
-
-
 GPIO.setmode(GPIO.BCM)
 
 GPIO.setup(constants.lock, GPIO.OUT)

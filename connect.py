@@ -3,10 +3,14 @@ import string
 from firebase_admin import db
 import constants 
 
-def connect_to_smartPhone():
-    print("Connecting to smartphone...")
-    connect_id = generate_connect_id()
-    db.reference('connect/' + constants.lock_id).set(connect_id)
+def connect_to_smartphone():
+    print("Set up connection with smartphone")
+    ref = db.reference('connect/' + constants.lock_id)
+    if ref.get():
+        ref.delete()
+    else:
+        connect_id = generate_connect_id()
+        ref.set(connect_id)
 
 def generate_connect_id():
     length=6

@@ -1,5 +1,5 @@
 from evdev import InputDevice, ecodes, categorize
-from connect import connect_to_smartPhone
+from connect import connect_to_smartphone
 import constants
 
 numpad_path = '/dev/input/event0'
@@ -30,15 +30,6 @@ keypad_mapping = {
 num = ""
 temporary_num = ""
 
-# def keyboard_job_test():
-#     for event in dev.read_loop():
-#         if event.type == ecodes.EV_KEY:
-#             key_event = categorize(event)
-#             if key_event.keystate == key_event.key_down:
-#                 keycode = key_event.scancode
-#                 if keycode in keypad_mapping:
-#                     print(f'You pressed: {keypad_mapping[keycode]}')
-
 def keyboard_input_job():
     global temporary_num
     for event in dev.read_loop():
@@ -67,7 +58,7 @@ def keyboard_function_job(key):
     elif key == 'NumLock':
         print('pressed NumLock')
         print("lock_id in numpad:", constants.lock_id)
-        connect_to_smartPhone()
+        connect_to_smartphone()
 #     elif key is not None:
 #         temporary_num += key
 #         if len(temporary_num) > 4:
