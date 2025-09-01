@@ -1,5 +1,8 @@
+from datetime import datetime
+import time
 from evdev import InputDevice, ecodes, categorize
 from connect import connect_to_smartphone
+from firebase_admin import db
 import constants
 
 numpad_path = '/dev/input/event0'
@@ -28,40 +31,66 @@ keypad_mapping = {
 }
 
 num = ""
-temporary_num = ""
 
 def keyboard_input_job():
-    global temporary_num
     for event in dev.read_loop():
         if event.type == ecodes.EV_KEY:
             key_event = categorize(event)
             if key_event.keystate == key_event.key_down:
                 keycode = key_event.scancode
                 if keycode in keypad_mapping:
-                    print(f'You pressed: {keypad_mapping[keycode]}')
                     keyboard_function_job(keypad_mapping[keycode]) 
 
 def keyboard_function_job(key):
-    global temporary_num, num
-    print ('keyboard_function_job')
+    global num
 
     if key == 'Enter':
         print('pressed Enter')
-#         num = temporary_num
-#         temporary_num = ""
-#         password = "1234"
-#         #cardUID, password, start_time, end_time = get_access_settings()
-#         if num == password :#and is_now_in_range(start_time, end_time):
-#             AllowedToEnter(password)
-#         else:
-#             NotAllowedToEnter(password)
+        is_password_correct()
+        num = ""
+    elif key == 'Backspace':
+        print('pressed Backspace')
+        num = num[:-1]
+        print("temporary_num:", num)
     elif key == 'NumLock':
         print('pressed NumLock')
-        print("lock_id in numpad:", constants.lock_id)
         connect_to_smartphone()
-#     elif key is not None:
-#         temporary_num += key
-#         if len(temporary_num) > 4:
-#             temporary_num = temporary_num[1:]
-#         lcd.clear()
-#         lcd.write_string(temporary_num)
+    elif key in ['0','1','2','3','4','5','6','7','8','9']:
+        num += key
+        print("temporary_num:", num)
+    else:
+        print('pressed other key')
+
+def is_password_correct():
+    global num
+    ref = db.reference(f'locks/{constants.lock_id}/passwords')
+    passwords = ref.get()
+    password = passwords.get('password')
+    temp_passwords = passwords.get('temp_password')
+    if num == password:
+        print("password correct")
+        # allowed_to_enter()
+    else:
+        temp_passwords = passwords.get('temp_passwords', {})
+        now = int(time.time())
+        valid_found = False
+
+        for temp in temp_passwords.values():
+            temp_password = temp.get("temp_password")
+            start = temp.get("valid_start")
+            end = temp.get("valid_until")
+            # start_t = datetime.fromtimestamp(start)
+            # end_t = datetime.fromtimestamp(end)
+            # print(start_t, "~", end_t)
+
+            if temp_password and start and end:
+                if num == temp_password and start <= now <= end:
+                    valid_found = True
+                    break
+
+        if valid_found:
+            print("temp_password correct")
+            # allowed_to_enter()
+        else:
+            print("password incorrect or not in valid time range")
+            # not_allowed_to_enter()

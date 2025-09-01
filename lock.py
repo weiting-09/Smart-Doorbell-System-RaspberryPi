@@ -9,7 +9,7 @@ def unlock_the_door():
     GPIO.output(lock, GPIO.HIGH)#HIGH為解鎖
     print("unlock (HIGH)")
 
-# def AllowedToEnter(method="unknown"):
+# def allowed_to_enter(method="unknown"):
 #     GPIO.output(LED_green, GPIO.HIGH)
 #     lcd.clear()
 #     lcd.write_string("Welcome")
@@ -18,8 +18,9 @@ def unlock_the_door():
 #     lcd.clear()
 #     update_lock_status(True)
 #     log_access("allowed", method)
+#     #解鎖紀錄
 
-# def NotAllowedToEnter(method="unknown"):
+# def not_allowed_to_enter(method="unknown"):
 #     GPIO.output(LED_red, GPIO.HIGH)
 #     lcd.clear()
 #     lcd.write_string("not allowed")
@@ -30,3 +31,4 @@ def unlock_the_door():
 #     lcd.clear()
 #     update_lock_status(False)
 #     log_access("denied", method)
+#     #解鎖紀錄

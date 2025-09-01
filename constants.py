@@ -1,4 +1,4 @@
-lock_id = "" # TODO: 確認是否改成門鎖ID
+lock_id = ""
 lock = 14
 LED_green = 21
 LED_red = 20
