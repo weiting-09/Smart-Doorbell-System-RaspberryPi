@@ -1,9 +1,14 @@
+import threading
+from RFID import add_new_RFID
 from firebase_admin import db
 import RPi.GPIO as GPIO
 from lock import lock_the_door, unlock_the_door
 import constants
 
+rfid_thread = None
+
 def stream_handler(event):
+    global rfid_thread
     if event.path == "/":
         print("初始化資料")
     else:
@@ -18,6 +23,18 @@ def stream_handler(event):
             else:
                 lock_the_door()
                 print("門已上鎖")
+
+        elif event.path == "/RFIDs/add_new_RFID":
+            if event.data:
+                print("開始新增RFID")
+                rfid_thread = threading.Thread(target=add_new_RFID)
+                rfid_thread.daemon = True  # 主程式結束時會自動結束
+                rfid_thread.start()
+
+            else:
+                print("結束新增RFID")
+                if rfid_thread and rfid_thread.is_alive():
+                    rfid_thread.join(timeout=2)
 
 # 監聽欄位變化
 def stream_handler_listener(lock_id):

@@ -58,6 +58,14 @@ def keyboard_function_job(key):
     elif key in ['0','1','2','3','4','5','6','7','8','9']:
         num += key
         print("temporary_num:", num)
+    ################ 僅開發時使用
+    elif key == '+':
+        print('pressed +')
+        db.reference(f'locks/{constants.lock_id}/RFIDs/add_new_RFID').set(True)
+    elif key == '-':
+        print('pressed -')
+        db.reference(f'locks/{constants.lock_id}/RFIDs/add_new_RFID').set(False)
+    ################ 僅開發時使用
     else:
         print('pressed other key')
 
@@ -79,9 +87,6 @@ def is_password_correct():
             temp_password = temp.get("temp_password")
             start = temp.get("valid_start")
             end = temp.get("valid_until")
-            # start_t = datetime.fromtimestamp(start)
-            # end_t = datetime.fromtimestamp(end)
-            # print(start_t, "~", end_t)
 
             if temp_password and start and end:
                 if num == temp_password and start <= now <= end:

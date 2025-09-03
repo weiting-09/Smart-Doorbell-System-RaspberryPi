@@ -1,3 +1,4 @@
+from RFID import RFID_job
 import firebase_admin
 from firebase_admin import credentials, db
 from time import time, sleep
@@ -30,12 +31,12 @@ def main():
 
     try:
         threading.Thread(target=keyboard_input_job).start()
+        threading.Thread(target=RFID_job).start()
         while True:
             # db.reference('locks/lock_001/status').set(True)
             # sleep(1)
             # db.reference('locks/lock_001/status').set(False)
             sleep(1)
-            
     except KeyboardInterrupt:
         print("停止監聽")
         p.terminate()
