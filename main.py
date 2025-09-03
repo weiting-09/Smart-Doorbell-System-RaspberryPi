@@ -5,6 +5,7 @@ from time import time, sleep
 import RPi.GPIO as GPIO
 import multiprocessing
 import threading
+from hardware import setup_hardware
 from numpad import keyboard_input_job
 from stream_handler import stream_handler_listener
 import constants
@@ -16,15 +17,8 @@ firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://smart-doorbell-system-b85c7-default-rtdb.firebaseio.com/'
 })
 
-GPIO.setmode(GPIO.BCM)
-
-GPIO.setup(constants.lock, GPIO.OUT)
-#GPIO.setup(constants.LED_green, GPIO.OUT)
-#GPIO.setup(constants.LED_red, GPIO.OUT)
-#GPIO.setup(constants.button, GPIO.IN, GPIO.PUD_UP)
-#GPIO.setup(constants.Buzzer, GPIO.OUT)
-
 def main():
+    setup_hardware()
     constants.lock_id = get_raspberryPi_cpu_id()
     p = multiprocessing.Process(target=stream_handler_listener, args=(constants.lock_id,))
     p.start()

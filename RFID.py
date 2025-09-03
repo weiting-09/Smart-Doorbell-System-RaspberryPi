@@ -12,21 +12,17 @@ reader = SimpleMFRC522()
 def RFID_job():
     print("Starting RFID job...")
     while True:
-        id, text = reader.read_no_block()
+        id, text = reader.read()
         if id is not None:
             print(f"RFID ID: {id}")
         time.sleep(0.5)
-
-        # id, text = reader.read()
-        # print(f"RFID ID: {id}, Text: {text}")
-
-        # cardUID, password, start_time, end_time = get_access_settings()
-        # if id == cardUID and is_now_in_range(start_time, end_time):
-        #     AllowedToEnter("RFID")
-        # else:
-        #     NotAllowedToEnter("RFID")
-        # sleep(1)
-        # lcd.clear()
+        ref = db.reference(f'locks/{constants.lock_id}/RFIDs/')
+        if ref.get() and str(id) in ref.get().keys():
+            print("RFID recognized, allowed to enter.")
+            # AllowedToEnter("RFID")
+        else:
+            print("RFID not recognized, not allowed to enter.")
+            # NotAllowedToEnter("RFID")
 
 def add_new_RFID():
     while(True):
