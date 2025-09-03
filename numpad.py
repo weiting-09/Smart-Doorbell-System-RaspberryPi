@@ -71,31 +71,42 @@ def keyboard_function_job(key):
 
 def is_password_correct():
     global num
-    ref = db.reference(f'locks/{constants.lock_id}/passwords')
-    passwords = ref.get()
-    password = passwords.get('password')
-    temp_passwords = passwords.get('temp_password')
-    if num == password:
-        print("password correct")
-        # allowed_to_enter()
-    else:
-        temp_passwords = passwords.get('temp_passwords', {})
-        now = int(time.time())
-        valid_found = False
-
-        for temp in temp_passwords.values():
-            temp_password = temp.get("temp_password")
-            start = temp.get("valid_start")
-            end = temp.get("valid_until")
-
-            if temp_password and start and end:
-                if num == temp_password and start <= now <= end:
-                    valid_found = True
-                    break
-
-        if valid_found:
-            print("temp_password correct")
+    try:
+        ref = db.reference(f'locks/{constants.lock_id}/passwords')
+        passwords = ref.get()
+        if passwords is None:
+            print("No passwords set in database.")
+            return
+        password = passwords.get('password')
+        if num == password:
+            print("password correct")
+            return #之後用allowed_to_enter代替
             # allowed_to_enter()
         else:
-            print("password incorrect or not in valid time range")
-            # not_allowed_to_enter()
+            temp_passwords = passwords.get('temp_passwords', {})
+            now = int(time.time())
+            valid_found = False
+
+            if temp_passwords is None:
+                print("No temporary passwords set in database.")
+                return
+            else:
+                for temp in temp_passwords.values():
+                    temp_password = temp.get("temp_password")
+                    start = temp.get("valid_start")
+                    end = temp.get("valid_until")
+
+                    if temp_password and start and end:
+                        if num == temp_password and start <= now <= end:
+                            valid_found = True
+                            break
+
+            if valid_found:
+                print("temp_password correct")
+                # allowed_to_enter()
+            else:
+                print("password incorrect or not in valid time range")
+                # not_allowed_to_enter()
+    except Exception as e:
+        print(f"Error checking password: {e}")
+        

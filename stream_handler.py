@@ -49,6 +49,11 @@ def set_lock_default_data(status_ref):
         default_data = {
             # TODO: 加入lock預設欄位
             'isOpened': False,
+            'RFIDs': {
+                'add_new_RFID': False
+            },
+            # 'passwords': {},
+            # 'onlock_logs': {}
         }
         status_ref.set(default_data)
         print(f"lock原本不存在，已建立預設資料")

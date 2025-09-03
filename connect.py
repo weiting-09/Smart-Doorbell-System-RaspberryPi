@@ -31,8 +31,8 @@ def get_raspberryPi_cpu_id():
                 if line.startswith("Serial"):
                     serial = line.strip().split(":")[1].strip()
                     print("This Raspberry Pi's ID:", serial)
-                    # return serial
-                    return "lock_001"
+                    return serial
+                    #return "lock_001"
     except FileNotFoundError:
         print("Cannot get Raspberry Pi ID")
         return None
