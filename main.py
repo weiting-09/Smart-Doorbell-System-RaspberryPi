@@ -1,3 +1,4 @@
+from LCD import LCD_display_job, setup_lcd
 from RFID import RFID_job
 import firebase_admin
 from firebase_admin import credentials, db
@@ -5,7 +6,7 @@ from time import time, sleep
 import RPi.GPIO as GPIO
 import multiprocessing
 import threading
-from hardware import setup_hardware
+from hardware import destroy, setup_hardware
 from numpad import keyboard_input_job
 from stream_handler import stream_handler_listener
 import constants
@@ -37,7 +38,7 @@ def main():
         p.join()
         print("監聽已停止")
     finally:
-        GPIO.cleanup()
+        destroy()
 
 if __name__ == "__main__":
     main()

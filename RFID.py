@@ -1,4 +1,5 @@
 import time
+from access_control import allowed_to_enter, not_allowed_to_enter
 import constants
 from mfrc522 import SimpleMFRC522
 import RPi.GPIO as GPIO
@@ -12,6 +13,7 @@ reader = SimpleMFRC522()
 def RFID_job():
     print("Starting RFID job...")
     while True:
+        print("請將RFID卡片靠近讀取器...")
         id, text = reader.read()
         if id is not None:
             print(f"RFID ID: {id}")
@@ -19,10 +21,10 @@ def RFID_job():
         ref = db.reference(f'locks/{constants.lock_id}/RFIDs/')
         if ref.get() and str(id) in ref.get().keys():
             print("RFID recognized, allowed to enter.")
-            # AllowedToEnter("RFID")
+            allowed_to_enter(method="RFID")##########
         else:
             print("RFID not recognized, not allowed to enter.")
-            # NotAllowedToEnter("RFID")
+            not_allowed_to_enter(method="RFID")#############
 
 def add_new_RFID():
     while(True):

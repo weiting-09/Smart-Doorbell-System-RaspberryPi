@@ -1,5 +1,6 @@
 from datetime import datetime
 import time
+from access_control import allowed_to_enter, not_allowed_to_enter
 from evdev import InputDevice, ecodes, categorize
 from connect import connect_to_smartphone
 from firebase_admin import db
@@ -80,8 +81,8 @@ def is_password_correct():
         password = passwords.get('password')
         if num == password:
             print("password correct")
-            return #之後用allowed_to_enter代替
-            # allowed_to_enter()
+            allowed_to_enter(method="password")
+            return 
         else:
             temp_passwords = passwords.get('temp_passwords', {})
             now = int(time.time())
@@ -103,10 +104,9 @@ def is_password_correct():
 
             if valid_found:
                 print("temp_password correct")
-                # allowed_to_enter()
+                allowed_to_enter(method="temporary password")
             else:
                 print("password incorrect or not in valid time range")
-                # not_allowed_to_enter()
+                not_allowed_to_enter(method="password")
     except Exception as e:
         print(f"Error checking password: {e}")
-        
