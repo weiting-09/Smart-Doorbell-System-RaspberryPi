@@ -1,4 +1,4 @@
-from LCD import LCD_display_job, setup_lcd
+from LCD import LCD_display_job, clear_lcd_and_show_prompt, setup_lcd
 from RFID import RFID_job
 import firebase_admin
 from firebase_admin import credentials, db
@@ -27,10 +27,8 @@ def main():
     try:
         threading.Thread(target=keyboard_input_job).start()
         threading.Thread(target=RFID_job).start()
+        clear_lcd_and_show_prompt()
         while True:
-            # db.reference('locks/lock_001/status').set(True)
-            # sleep(1)
-            # db.reference('locks/lock_001/status').set(False)
             sleep(1)
     except KeyboardInterrupt:
         print("停止監聽")

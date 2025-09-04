@@ -1,5 +1,6 @@
 from datetime import datetime
 import time
+from LCD import LCD_display_job, clear_lcd_and_show_prompt
 from access_control import allowed_to_enter, not_allowed_to_enter
 from evdev import InputDevice, ecodes, categorize
 from connect import connect_to_smartphone
@@ -33,6 +34,7 @@ keypad_mapping = {
 
 num = ""
 
+
 def keyboard_input_job():
     for event in dev.read_loop():
         if event.type == ecodes.EV_KEY:
@@ -40,7 +42,8 @@ def keyboard_input_job():
             if key_event.keystate == key_event.key_down:
                 keycode = key_event.scancode
                 if keycode in keypad_mapping:
-                    keyboard_function_job(keypad_mapping[keycode]) 
+                    keyboard_function_job(keypad_mapping[keycode])
+
 
 def keyboard_function_job(key):
     global num
@@ -49,26 +52,33 @@ def keyboard_function_job(key):
         print('pressed Enter')
         is_password_correct()
         num = ""
+        clear_lcd_and_show_prompt()
     elif key == 'Backspace':
         print('pressed Backspace')
         num = num[:-1]
-        print("temporary_num:", num)
+        LCD_display_job(line1="Enter password:", line2=num,
+                        cursor_pos2=(1, 0),  need_clear=False)
+        print("num:", num)
     elif key == 'NumLock':
         print('pressed NumLock')
         connect_to_smartphone()
-    elif key in ['0','1','2','3','4','5','6','7','8','9']:
+    elif key in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
         num += key
-        print("temporary_num:", num)
-    ################ 僅開發時使用
+        LCD_display_job(line1="Enter password:", line2=num,
+                        cursor_pos2=(1, 0), need_clear=False)
+        print("num:", num)
+    # 僅開發時使用
     elif key == '+':
         print('pressed +')
         db.reference(f'locks/{constants.lock_id}/RFIDs/add_new_RFID').set(True)
     elif key == '-':
         print('pressed -')
-        db.reference(f'locks/{constants.lock_id}/RFIDs/add_new_RFID').set(False)
-    ################ 僅開發時使用
+        db.reference(
+            f'locks/{constants.lock_id}/RFIDs/add_new_RFID').set(False)
+    # 僅開發時使用
     else:
         print('pressed other key')
+
 
 def is_password_correct():
     global num
@@ -77,12 +87,14 @@ def is_password_correct():
         passwords = ref.get()
         if passwords is None:
             print("No passwords set in database.")
+            LCD_display_job(line1="Please setup", line2="on phone first",
+                            cursor_pos2=(1, 2),  need_clear=False)
             return
         password = passwords.get('password')
         if num == password:
             print("password correct")
             allowed_to_enter(method="password")
-            return 
+            return
         else:
             temp_passwords = passwords.get('temp_passwords', {})
             now = int(time.time())
@@ -90,6 +102,8 @@ def is_password_correct():
 
             if temp_passwords is None:
                 print("No temporary passwords set in database.")
+                LCD_display_job(line1="Please setup", line2="on phone first",
+                                cursor_pos2=(1, 2),  need_clear=False)
                 return
             else:
                 for temp in temp_passwords.values():

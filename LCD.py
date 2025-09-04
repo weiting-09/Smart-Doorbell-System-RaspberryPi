@@ -21,5 +21,11 @@ def LCD_display_job(line1 = "", cursor_pos1=(0,0), line2 = "", cursor_pos2=(1,7)
     lcd.write_string(line1)
     lcd.cursor_pos = cursor_pos2
     lcd.write_string(line2)
-    sleep(2)
-    if need_clear: lcd.clear()
+    if need_clear: 
+        sleep(2)
+        lcd.clear()
+
+def clear_lcd_and_show_prompt():
+    global lcd
+    lcd.clear()
+    LCD_display_job(line1="tap card or", line2="input password", cursor_pos2=(1,1), need_clear=False)    

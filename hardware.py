@@ -19,12 +19,16 @@ def setup_hardware():
 
     Buzz = GPIO.PWM(constants.Buzzer, 440)
 
-    GPIO.add_event_detect(constants.button, GPIO.FALLING, 
-                        callback=lambda channel: button_pressed(Buzz),bouncetime=350)
+    GPIO.add_event_detect(
+        constants.button, 
+        GPIO.FALLING, 
+        callback=lambda channel: button_pressed(),
+        bouncetime=350
+    )
     print("Hardware setup complete.")
 
-def button_pressed(channel):
-    if GPIO.input(constants.button) == GPIO.LOW:  # 真的按下
+def button_pressed():
+    if GPIO.input(constants.button) == GPIO.LOW: 
         play_doorbell_chime(Buzz)
 
 def destroy():

@@ -21,10 +21,10 @@ def RFID_job():
         ref = db.reference(f'locks/{constants.lock_id}/RFIDs/')
         if ref.get() and str(id) in ref.get().keys():
             print("RFID recognized, allowed to enter.")
-            allowed_to_enter(method="RFID")##########
+            allowed_to_enter(method="RFID")
         else:
             print("RFID not recognized, not allowed to enter.")
-            not_allowed_to_enter(method="RFID")#############
+            not_allowed_to_enter(method="RFID")
 
 def add_new_RFID():
     while(True):

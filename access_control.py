@@ -5,6 +5,7 @@ from firebase_admin import db
 import constants
 from lock import lock_the_door, unlock_the_door
 
+
 def allowed_to_enter(method="unknown"):
     turn_on_green_led()
     unlock_the_door()
@@ -13,11 +14,13 @@ def allowed_to_enter(method="unknown"):
     lock_the_door()
     set_unlock_logs(method=method, status="successed")
 
+
 def not_allowed_to_enter(method="unknown"):
     turn_on_red_led()
     LCD_display_job(line1="not allow", line2="to enter")
     turn_off_red_led()
     set_unlock_logs(method=method, status="failed")
+
 
 def set_unlock_logs(method, status, timestamp=None, user="unknown"):
     if timestamp is None:

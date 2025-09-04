@@ -1,5 +1,6 @@
 import secrets
 import string
+from LCD import LCD_display_job, clear_lcd_and_show_prompt
 from firebase_admin import db
 import constants 
 
@@ -8,9 +9,11 @@ def connect_to_smartphone():
     ref = db.reference('connect/' + constants.lock_id)
     if ref.get():
         ref.delete()
+        clear_lcd_and_show_prompt()
     else:
         connect_id = generate_connect_id()
         ref.set(connect_id)
+        LCD_display_job(line1="connect ID", line2=connect_id, need_clear=False)
 
 def generate_connect_id():
     length=6
