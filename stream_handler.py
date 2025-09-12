@@ -1,8 +1,7 @@
 import threading
 from RFID import add_new_RFID
+from access_control import allowed_to_enter
 from firebase_admin import db
-import RPi.GPIO as GPIO
-from lock import lock_the_door, unlock_the_door
 import constants
 
 rfid_thread = None
@@ -16,13 +15,10 @@ def stream_handler(event):
         print("Path:", event.path)
         print("Data:", event.data)
         
-        if event.path == "/isOpened":
+        if event.path == "/allow_to_enter":
             if event.data:
-                unlock_the_door()
+                allowed_to_enter(method="APP")
                 print("門已解鎖")
-            else:
-                lock_the_door()
-                print("門已上鎖")
 
         elif event.path == "/RFIDs/add_new_RFID":
             if event.data:
@@ -48,12 +44,10 @@ def set_lock_default_data(status_ref):
     if current_data is None:
         default_data = {
             # TODO: 加入lock預設欄位
-            'isOpened': False,
+            'allow_to_enter': False,
             'RFIDs': {
                 'add_new_RFID': False
             },
-            # 'passwords': {},
-            # 'onlock_logs': {}
         }
         status_ref.set(default_data)
         print(f"lock原本不存在，已建立預設資料")

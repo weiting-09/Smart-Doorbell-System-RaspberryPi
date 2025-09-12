@@ -12,7 +12,7 @@ def allowed_to_enter(method="unknown"):
     LCD_display_job(line1="Welcome!")
     turn_off_green_led()
     lock_the_door()
-    set_unlock_logs(method=method, status="successed")
+    if method != "APP": set_unlock_logs(method=method, status="successed")
 
 
 def not_allowed_to_enter(method="unknown"):
