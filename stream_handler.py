@@ -48,6 +48,7 @@ def set_lock_default_data(status_ref):
             'RFIDs': {
                 'add_new_RFID': False
             },
+            'security_mode':False
         }
         status_ref.set(default_data)
         print(f"lock原本不存在，已建立預設資料")

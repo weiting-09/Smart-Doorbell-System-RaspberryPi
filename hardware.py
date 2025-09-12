@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 from LCD import destroy_lcd, setup_lcd
+from RFID import stop_add_new_RFID
 import constants
 from doorbell_chime import play_doorbell_chime
 
@@ -37,3 +38,4 @@ def destroy():
     GPIO.output(constants.Buzzer, 1)
     GPIO.cleanup()
     destroy_lcd()
+    stop_add_new_RFID()
