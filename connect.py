@@ -13,7 +13,7 @@ def connect_to_smartphone():
     else:
         connect_id = generate_connect_id()
         ref.set(connect_id)
-        LCD_display_job(line1="connect ID", line2=connect_id, need_clear=False)
+        LCD_display_job(line1="connect ID", line2=connect_id)
 
 def generate_connect_id():
     length=6

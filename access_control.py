@@ -9,11 +9,11 @@ from lock import lock_the_door, unlock_the_door
 def allowed_to_enter(method="unknown"):
     if(is_security_mode()): 
         print("security_mode: cannot open the door")
-        LCD_display_job(line1="security_mode:", line2="Keep closed", cursor_pos2=(1,4))
+        LCD_display_job(line1="security_mode:", line2="Keep closed", cursor_pos2=(1,4), display_time=2)
         return
     turn_on_green_led()
     unlock_the_door()
-    LCD_display_job(line1="Welcome!")
+    LCD_display_job(line1="Welcome!", display_time=2)
     turn_off_green_led()
     lock_the_door()
     if method != "APP": set_unlock_logs(method=method, status="successed")
@@ -21,7 +21,7 @@ def allowed_to_enter(method="unknown"):
 
 def not_allowed_to_enter(method="unknown"):
     turn_on_red_led()
-    LCD_display_job(line1="not allow", line2="to enter")
+    LCD_display_job(line1="not allow", line2="to enter", display_time=2)
     turn_off_red_led()
     set_unlock_logs(method=method, status="failed")
 

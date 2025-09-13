@@ -57,7 +57,7 @@ def keyboard_function_job(key):
         print('pressed Backspace')
         num = num[:-1]
         LCD_display_job(line1="Enter password:", line2=num,
-                        cursor_pos2=(1, 0),  need_clear=False)
+                        cursor_pos2=(1, 0))
         print("num:", num)
     elif key == 'NumLock':
         print('pressed NumLock')
@@ -65,7 +65,7 @@ def keyboard_function_job(key):
     elif key in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
         num += key
         LCD_display_job(line1="Enter password:", line2=num,
-                        cursor_pos2=(1, 0), need_clear=False)
+                        cursor_pos2=(1, 0))
         print("num:", num)
     # 僅開發時使用
     elif key == '+':
@@ -88,7 +88,7 @@ def is_password_correct():
         if passwords is None:
             print("No passwords set in database.")
             LCD_display_job(line1="Please setup", line2="on phone first",
-                            cursor_pos2=(1, 2),  need_clear=False)
+                            cursor_pos2=(1, 2))
             return
         password = passwords.get('password')
         if num == password:
@@ -103,7 +103,7 @@ def is_password_correct():
             if temp_passwords is None:
                 print("No temporary passwords set in database.")
                 LCD_display_job(line1="Please setup", line2="on phone first",
-                                cursor_pos2=(1, 2),  need_clear=False)
+                                cursor_pos2=(1, 2))
                 return
             else:
                 for temp in temp_passwords.values():

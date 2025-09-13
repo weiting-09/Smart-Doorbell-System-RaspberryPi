@@ -1,5 +1,5 @@
 from LCD import LCD_display_job, clear_lcd_and_show_prompt, setup_lcd
-from RFID import RFID_job, rfid_reader_job
+from RFID import rfid_controller_job, rfid_reader_job
 import firebase_admin
 from firebase_admin import credentials, db
 from time import time, sleep
@@ -26,7 +26,7 @@ def main():
 
     try:
         threading.Thread(target=keyboard_input_job).start()
-        threading.Thread(target=RFID_job).start()
+        threading.Thread(target=rfid_controller_job).start()
         threading.Thread(target=rfid_reader_job).start()
         clear_lcd_and_show_prompt()
         while True:
