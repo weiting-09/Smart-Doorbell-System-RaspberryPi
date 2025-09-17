@@ -22,7 +22,7 @@ def rfid_reader_job():
         time.sleep(1.5)
 
 def rfid_controller_job():
-    ref = db.reference(f'locks/{constants.lock_id}/RFIDs/')
+    ref = db.reference(f'locks/{constants.lock_id}/RFIDs/cards/')
 
     while True:
         id = rfid_queue.get()
@@ -77,6 +77,7 @@ def add_new_RFID():
         time.sleep(0.5)
 
 def stop_add_new_RFID():
+    print("stop add_new_RFID")
     db.reference(f'locks/{constants.lock_id}/RFIDs/add_new_RFID').set(False)
     print("新增模式已結束")
 

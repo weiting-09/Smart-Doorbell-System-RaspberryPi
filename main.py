@@ -6,7 +6,7 @@ from time import time, sleep
 import RPi.GPIO as GPIO
 import multiprocessing
 import threading
-from hardware import destroy, setup_hardware
+from hardware import destroy, setup_initial
 from numpad import keyboard_input_job
 from stream_handler import stream_handler_listener
 import constants
@@ -19,8 +19,8 @@ firebase_admin.initialize_app(cred, {
 })
 
 def main():
-    setup_hardware()
     constants.lock_id = get_raspberryPi_cpu_id()
+    setup_initial()
     p = multiprocessing.Process(target=stream_handler_listener, args=(constants.lock_id,))
     p.start()
 

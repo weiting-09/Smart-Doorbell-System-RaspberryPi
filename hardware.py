@@ -6,7 +6,7 @@ from doorbell_chime import play_doorbell_chime
 
 Buzz = None
 
-def setup_hardware():
+def setup_initial():
     global Buzz
     GPIO.setmode(GPIO.BCM)
 
@@ -26,7 +26,9 @@ def setup_hardware():
         callback=lambda channel: button_pressed(),
         bouncetime=350
     )
-    print("Hardware setup complete.")
+    print("ready to stop add_new_RFID")
+    stop_add_new_RFID()
+    print("Setup complete.")
 
 def button_pressed():
     if GPIO.input(constants.button) == GPIO.LOW: 
