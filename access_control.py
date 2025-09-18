@@ -36,7 +36,12 @@ def is_security_mode():
 
 def set_unlock_logs(method, status, timestamp=None, user="unknown"):
     if timestamp is None:
-        timestamp = int(time.time())
+        timestamp = int(time.time()*1000)
+        print("set current timestamp:", timestamp)
+        #轉成年月日
+        time_array = time.localtime(timestamp)
+        print("time_array:", time_array)
+        #timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time_array)
     ref = db.reference(f'locks/{constants.lock_id}/unlock_logs')
     ref.push({
         'method': method,

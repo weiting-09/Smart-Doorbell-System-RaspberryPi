@@ -36,8 +36,11 @@ def button_pressed():
 
 def destroy():
     global Buzz
-    Buzz.stop()
-    GPIO.output(constants.Buzzer, 1)
-    GPIO.cleanup()
-    destroy_lcd()
-    stop_add_new_RFID()
+    try:
+        Buzz.stop()
+        GPIO.output(constants.Buzzer, 1)
+        GPIO.cleanup()
+        destroy_lcd()
+        stop_add_new_RFID()
+    except Exception as e:
+        print("Error during destroy:", e)
