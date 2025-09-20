@@ -6,23 +6,24 @@ import os
 known_encodings = []
 known_names = []
 
-faces_dir = "faces/user1"  # 存放已知人臉的資料夾
-for file in os.listdir(faces_dir):
-    path = os.path.join(faces_dir, file)
-    if not file.lower().endswith((".jpg", ".png", ".jpeg")):
+faces_dir = "faces"
+
+for name in os.listdir(faces_dir):
+    person_dir = os.path.join(faces_dir, name)
+    if not os.path.isdir(person_dir):
         continue
-    image = face_recognition.load_image_file(path)
-    encodings = face_recognition.face_encodings(image)
-    if len(encodings) > 0:
-        known_encodings.append(encodings[0])
-        # 去掉副檔名當作名字
-        known_names.append(os.path.splitext(file)[0])
-        print(f"[INFO] 已載入 {file}")
-    else:
-        print(f"[WARN] {file} 中找不到人臉，跳過")
+    for file in os.listdir(person_dir):
+        img_path = os.path.join(person_dir, file)
+        img = face_recognition.load_image_file(img_path)
+        encodings = face_recognition.face_encodings(img)
+        if len(encodings) > 0:
+            known_encodings.append(encodings[0])
+            known_names.append(name)
+
+print("已載入人臉數量:", len(known_encodings))
 
 # Step 2: 開啟攝影機
-cap = cv2.VideoCapture(0)  # 0 = 第一個攝影機
+cap = cv2.VideoCapture(0)
 print("[INFO] 開始辨識，按 q 離開...")
 
 while True:
@@ -52,10 +53,6 @@ while True:
             print(f"成功辨識：{name}")
         else:
             print("辨識失敗：未知訪客")
-
-    # 按 q 離開
-    if cv2.waitKey(1) & 0xFF == ord("q"):
-        break
 
 cap.release()
 cv2.destroyAllWindows()
